@@ -1,0 +1,23 @@
+[tool.poetry]
+name = "google-photos-dedup"
+version = "1.0.0"
+description = "Deduplicate Google Photos Takeout archive by replacing duplicates with symbolic links."
+authors = ["François Bouchet <fbouchet+github@pm.me>"]
+license = "GPL-3.0"
+readme = "README.md"
+homepage = "https://github.com/fbouchet/gphotos_deduplicate"
+repository = "https://github.com/fbouchet/gphotos_deduplicate"
+keywords = ["google-photos", "deduplication", "symbolic-links", "duplicates"]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: GPL-3.0",
+    "Operating System :: OS Independent",
+]
+
+[tool.poetry.dependencies]
+python = "^3.7"
+tqdm = "^4.64.1"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
