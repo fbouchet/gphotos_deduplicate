@@ -1,2 +1,9 @@
 # gphotos_deduplicate
 Python script to remove duplicates from archives retrieved with Google Takeout from Google Photos, replacing the non yearly albums by symbolic links to the original file in the yearly albums
+
+# Context
+When retrieving photos from Google Photos, the volume retrieved is significantly larger than what Google identified as the size of photos stored. This is because when we create albums, or when Google Photos create albums automatically, a same photo end up being in several places: the original is in "Photos from YYYY" (e.g. "Photos from 2024") and copies are stored in all albums that also include that photo. Now, obviously, on Google servers, they must have symbolic links, but this is lost when retrieving the photos.
+The goal of this script is therefore to significantly reduce the size of the archive retrieved by browsing the "Photos from XXXX" folders and finding photos that have the same MD5 hash elsewhere, and ensure the symbolic link is done in such a way that any album links to the "main" source in the yearly folder, to not end up with a chaotic structure where its unclear where the original are stored. If a photo for some reason only exists in a non yearly album, it will be kept in there. Photos only in yearly albums are obviously also kept where they are.
+
+# Caveats
+The script should work on Linux, Windows and Mac OS. On Windows, one needs to have administrator rights. And in order to handle transfer from a Windows machine to a Linux one though, it is using **relative links** (i.e. a photo called "myPhoto.jpg" in "Photos from 2024" and "My album" will be linked from "My album" to "../Photos from 2024/myPhoto.jpg"), so that the link is maintained when transferring with rsync for instance. It is worth keeping in mind that transfer with Windows Explorer will most likely break the links so careful there.
