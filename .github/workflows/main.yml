@@ -1,0 +1,51 @@
+name: Release
+
+on:
+  push:
+    branches:
+      - main  # Trigger on pushes to the main branch
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+
+    steps:
+    # Step 1: Checkout the code
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    # Step 2: Set up Python environment (if you need to build or validate)
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.7'
+
+    # Step 3: Install Poetry (optional, but useful for dependency management)
+    - name: Install Poetry
+      run: pip install poetry
+
+    # Step 4: Validate pyproject.toml (optional)
+    - name: Install dependencies
+      run: poetry install
+
+    # Step 5: Generate the release tag
+    - name: Bump Version and Tag
+      id: tag
+      run: |
+        VERSION=$(grep -oP '(?<=version = ")[^"]+' pyproject.toml)
+        echo "Version is $VERSION"
+        echo "tag=$VERSION" >> $GITHUB_ENV
+
+    # Step 6: Create GitHub Release
+    - name: Create Release
+      uses: actions/create-release@v1
+      with:
+        tag_name: ${{ env.tag }}
+        release_name: Release ${{ env.tag }}
+        body: |
+          Changes in this release:
+          $(cat CHANGELOG.md | awk '/## \['${{ env.tag }}'\]/,/^$/')
+        draft: false
+        prerelease: false
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
