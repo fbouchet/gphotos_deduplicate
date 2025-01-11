@@ -1,12 +1,15 @@
-name: Release
+name: Release Workflow
 
 on:
   push:
     branches:
-      - main  # Trigger on pushes to the main branch
+      - main  # Trigger full release process on main branch
+      - dev   # Trigger tests only on dev branch
+  workflow_dispatch:  # Allow manual triggering
 
 jobs:
-  release:
+  test:
+    if: github.ref == 'refs/heads/dev'
     runs-on: ubuntu-latest
 
     steps:
@@ -14,21 +17,48 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v3
 
-    # Step 2: Set up Python environment (if you need to build or validate)
+    # Step 2: Set up Python
     - name: Set up Python
       uses: actions/setup-python@v4
       with:
-        python-version: '3.7'
+        python-version: '3.9'
 
-    # Step 3: Install Poetry (optional, but useful for dependency management)
+    # Step 3: Install Poetry
     - name: Install Poetry
       run: pip install poetry
 
-    # Step 4: Validate pyproject.toml (optional)
+    # Step 4: Install Dependencies
     - name: Install dependencies
       run: poetry install
 
-    # Step 5: Generate the release tag
+    # Step 5: Run Tests (if any)
+    - name: Run tests
+      run: poetry run pytest  # Replace with your testing command
+
+  release:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+
+    steps:
+    # Step 1: Checkout the code
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    # Step 2: Set up Python
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.9'
+
+    # Step 3: Install Poetry
+    - name: Install Poetry
+      run: pip install poetry
+
+    # Step 4: Install Dependencies
+    - name: Install dependencies
+      run: poetry install
+
+    # Step 5: Extract Version and Tag
     - name: Bump Version and Tag
       id: tag
       run: |
