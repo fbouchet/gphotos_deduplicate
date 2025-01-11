@@ -29,7 +29,9 @@ jobs:
 
     # Step 4: Install Dependencies
     - name: Install dependencies
-      run: poetry install
+      run: |
+        cd gphotos_deduplicate
+        poetry install
 
     # Step 5: Run Tests (if any)
     - name: Run tests
